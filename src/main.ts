@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Storage } from './common/lib/Disk/Storage';
 import appConfig from './config/app.config';
-import { DiskType } from './common/lib/Disk/Option';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

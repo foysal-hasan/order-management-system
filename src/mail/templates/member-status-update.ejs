@@ -1,0 +1,10 @@
+<p>Hello <%= name %>,</p>
+<p>Your account status has been updated to: <strong><%= status %></strong>.</p>
+<% if (status === 'Warn') { %>
+    <p>Please be careful with your activities on our platform to avoid further restrictions.</p>
+<% } else if (status === 'Suspend') { %>
+    <p>Your account has been temporarily suspended. Please contact support for more information.</p>
+<% } else if (status === 'Ban') { %>
+    <p>Your account has been permanently banned due to violation of our terms/policies.</p>
+<% } %>
+<p>If you believe this is a mistake, please contact our support team.</p>

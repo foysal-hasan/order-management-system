@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title><%= title || 'Notification' %></title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      background-color: #17191f;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #1f2430;
+    "
+  >
+    <div style="display: none; max-height: 0; overflow: hidden; opacity: 0;">
+      <%= text || 'You received a new notification.' %>
+    </div>
+
+    <table
+      role="presentation"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      width="100%"
+      style="background-color: #17191f; margin: 0; padding: 24px 0;"
+    >
+      <tr>
+        <td align="center">
+          <table
+            role="presentation"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            width="100%"
+            style="max-width: 640px; margin: 0 auto;"
+          >
+            <tr>
+              <td style="padding: 0 20px;">
+                <table
+                  role="presentation"
+                  cellpadding="0"
+                  cellspacing="0"
+                  border="0"
+                  width="100%"
+                  style="
+                    background-color: #f7f3ec;
+                    border-radius: 24px;
+                    border: 1px solid #eadfce;
+                  "
+                >
+                  <tr>
+                    <td style="padding: 40px 32px 18px 32px;">
+                      <table
+                        role="presentation"
+                        cellpadding="0"
+                        cellspacing="0"
+                        border="0"
+                        width="100%"
+                      >
+                        <tr>
+                          <td
+                            style="
+                              font-size: 14px;
+                              line-height: 22px;
+                              color: #8e7653;
+                              font-weight: 700;
+                              letter-spacing: 0.6px;
+                              text-transform: uppercase;
+                            "
+                          >
+                            Notification
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            style="
+                              padding-top: 10px;
+                              font-family: Georgia, 'Times New Roman', serif;
+                              font-size: 36px;
+                              line-height: 42px;
+                              color: #21242d;
+                              font-weight: 700;
+                            "
+                          >
+                            <%= title || 'You have a new notification' %>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            style="
+                              padding-top: 16px;
+                              font-size: 17px;
+                              line-height: 28px;
+                              color: #535b68;
+                            "
+                          >
+                            A new update is available for your account.
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            style="
+                              padding-top: 8px;
+                              font-size: 17px;
+                              line-height: 28px;
+                              color: #535b68;
+                            "
+                          >
+                            <%= text || 'Please open the app to review your latest notification.' %>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <% if (typeof actionUrl !== 'undefined' && actionUrl) { %>
+                  <tr>
+                    <td style="padding: 0 32px 12px 32px;">
+                      <table
+                        role="presentation"
+                        cellpadding="0"
+                        cellspacing="0"
+                        border="0"
+                        width="100%"
+                        style="
+                          background-color: #ffffff;
+                          border: 2px solid #e79a29;
+                          border-radius: 20px;
+                        "
+                      >
+                        <tr>
+                          <td align="center" style="padding: 28px 20px;">
+                            <a
+                              href="<%= actionUrl %>"
+                              style="
+                                display: inline-block;
+                                background-color: #1f2430;
+                                color: #ffffff;
+                                text-decoration: none;
+                                padding: 14px 24px;
+                                border-radius: 12px;
+                                font-size: 15px;
+                                font-weight: 700;
+                              "
+                            >
+                              <%= actionText || 'Open App' %>
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <% } %>
+
+                  <tr>
+                    <td style="padding: 8px 32px 32px 32px;">
+                      <table
+                        role="presentation"
+                        cellpadding="0"
+                        cellspacing="0"
+                        border="0"
+                        width="100%"
+                      >
+                        <tr>
+                          <td
+                            style="
+                              font-size: 15px;
+                              line-height: 26px;
+                              color: #6a7280;
+                            "
+                          >
+                            This is an automated notification from <%= process.env.APP_NAME %>.
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            style="
+                              padding-top: 24px;
+                              border-top: 1px solid #e7dccd;
+                              font-size: 15px;
+                              line-height: 25px;
+                              color: #535b68;
+                            "
+                          >
+                            Regards,
+                            <br />
+                            <span style="color: #21242d; font-weight: 700;">
+                              <%= process.env.APP_NAME %> Team
+                            </span>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr>
+              <td
+                align="center"
+                style="
+                  padding: 22px 28px 0 28px;
+                  font-size: 13px;
+                  line-height: 22px;
+                  color: #9b9faa;
+                "
+              >
+                This is an automated email from
+                <span style="color: #f2e6d3;"><%= process.env.APP_NAME %></span>.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

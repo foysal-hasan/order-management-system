@@ -18,13 +18,41 @@ enum UserType {
   CUSTOMER
 }
 
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  SUSPENDED
+}
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  type      UserType @default(CUSTOMER)
-  created_At DateTime @default(now()) 
+  id         String   @id @default(cuid())
+  created_At DateTime @default(now())
   updated_At DateTime @updatedAt
 
+  email    String   @unique
+  name     String
+  type     UserType @default(CUSTOMER)
+  password String
+
+  email_verified_at DateTime?  @db.Timestamptz
+  status            UserStatus @default(ACTIVE)
+
+  // relations
+  sessions UserSession[]
+
   @@map("users")
+}
+
+model UserSession {
+  id         String   @id @default(cuid())
+  created_at DateTime @default(now()) @db.Timestamptz
+  updated_at DateTime @updatedAt @db.Timestamptz
+
+  user_id     String
+  user        User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  device_name String
+  ip_address  String
+  expires_at  DateTime @db.Timestamptz
+
+  @@map("user_sessions")
 }
