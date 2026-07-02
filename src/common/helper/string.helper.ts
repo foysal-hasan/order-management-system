@@ -1,8 +1,4 @@
-/**
- * StringHelper
- * @class StringHelper
- * @author Sojeb Sikder <sojebsikder@gmail.com>
- */
+
 export class StringHelper {
   // public static randomString(length: number = 32): string {
   //   const randomName = Array(length)
