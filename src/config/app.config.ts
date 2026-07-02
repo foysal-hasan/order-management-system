@@ -1,3 +1,5 @@
+import { DiskType } from "src/common/lib/Disk/Option";
+
 export default () => ({
   app: {
     name: process.env.APP_NAME,
@@ -10,6 +12,7 @@ export default () => ({
   },
 
   fileSystems: {
+    driver: (process.env.FILESYSTEM_DRIVER as DiskType) || 'local',
     public: {},
     s3: {
       driver: 's3',

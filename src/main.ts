@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Storage } from './common/lib/Disk/Storage';
 import appConfig from './config/app.config';
+import { DiskType } from './common/lib/Disk/Option';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -9,10 +10,10 @@ async function bootstrap() {
     logger: appConfig().app.environment === 'production' ? ['error', 'warn'] : ['log', 'error', 'warn', 'debug', 'verbose'],
   });
 
-  
+
 
   Storage.config({
-    driver: 'local',
+    driver: appConfig().fileSystems.driver,
     connection: {
       rootUrl: appConfig().storageUrl.rootUrl,
       publicUrl: appConfig().storageUrl.rootUrlPublic,
