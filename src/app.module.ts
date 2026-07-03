@@ -4,6 +4,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import appConfig from './config/app.config';
+import { AuthModule } from './modules/auth/auth.module';
+import { RedisModule } from '@nestjs-modules/ioredis';
+import { BullModule } from '@nestjs/bullmq';
+import { AdminModule } from './modules/admin/admin.module';
+import { ApplicationModule } from './modules/application/application.module';
 
 @Module({
   imports: [
@@ -11,7 +16,25 @@ import appConfig from './config/app.config';
       isGlobal: true,
       load: [appConfig],
     }),
-    PrismaModule
+    BullModule.forRoot({
+      connection: {
+        host: appConfig().redis.host,
+        password: appConfig().redis.password,
+        port: +appConfig().redis.port,
+      },
+    }),
+    RedisModule.forRoot({
+      type: 'single',
+      options: {
+        host: appConfig().redis.host,
+        password: appConfig().redis.password,
+        port: +appConfig().redis.port,
+      },
+    }),
+    PrismaModule,
+    AuthModule,
+    AdminModule,
+    ApplicationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

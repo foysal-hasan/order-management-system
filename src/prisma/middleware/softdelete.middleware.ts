@@ -1,7 +1,7 @@
 import { ArrayHelper } from '../../common/helper/array.helper';
 import { DateHelper } from '../../common/helper/date.helper';
 
-const models = ['Note'];
+const models = [];
 /**
  * prisma Soft delete middleware
  * @param params
@@ -11,7 +11,7 @@ const models = ['Note'];
 export async function SoftdeleteMiddleware(params, next) {
   const date = DateHelper.now();
   // Check incoming query type
-  // if (params.model == 'Note') {
+  
   if (ArrayHelper.inArray(params.model, models)) {
     // read soft deleted data
     if (params.action === 'findUnique' || params.action === 'findFirst') {

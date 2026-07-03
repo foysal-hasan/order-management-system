@@ -7,7 +7,6 @@
     "builder": "swc",
     "assets": [
       "mail/templates/**/*"
-      
     ],
     "watchAssets": true
   }

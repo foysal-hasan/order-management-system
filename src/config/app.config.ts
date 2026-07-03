@@ -47,10 +47,10 @@ export default () => ({
   },
 
   jwt: {
-    access_token_secret: process.env.JWT_ACCESS_TOKEN_SECRET,
-    refresh_token_secret: process.env.JWT_REFRESH_TOKEN_SECRET,
-    access_token_expiry: process.env.JWT_ACCESS_TOKEN_EXPIRY,
-    refresh_token_expiry: process.env.JWT_REFRESH_TOKEN_EXPIRY,
+    access_token_secret: process.env.JWT_ACCESS_TOKEN_SECRET || 'default_access_token_secret',
+    refresh_token_secret: process.env.JWT_REFRESH_TOKEN_SECRET || 'default_refresh_token_secret',
+    access_token_expiry: process.env.JWT_ACCESS_TOKEN_EXPIRY || '1h',
+    refresh_token_expiry: process.env.JWT_REFRESH_TOKEN_EXPIRY || '7d',
   },
 
   mail: {
@@ -94,7 +94,7 @@ export default () => ({
     // storage directory
     destination: '/destination',
     store: '/store',
-
+    avatar: '/avatar',
    
 
    

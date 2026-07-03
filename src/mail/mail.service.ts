@@ -1,15 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Queue } from 'bullmq';
 import { InjectQueue } from '@nestjs/bullmq';
-import { MailerService } from '@nestjs-modules/mailer';
 import appConfig from '../config/app.config';
 
 @Injectable()
 export class MailService {
+  private readonly logger = new Logger(MailService.name);
   constructor(
     @InjectQueue('mail-queue') private queue: Queue,
-    @InjectQueue('notification-mail-queue') private notificationQueue: Queue,
-    private mailerService: MailerService,
   ) {}
 
   async sendMemberInvitation({ user, member, url }) {
@@ -30,7 +28,7 @@ export class MailService {
         },
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error('Error sending member invitation', error);
     }
   }
 
@@ -40,6 +38,8 @@ export class MailService {
       const from = `${process.env.APP_NAME} <${appConfig().mail.from}>`;
       const subject = 'Email Verification';
 
+      this.logger.debug(`Adding job to queue for sending OTP code: ${otp} to email: ${email}`);
+      
       // add to queue
       await this.queue.add('sendOtpCodeToEmail', {
         to: email,
@@ -52,7 +52,7 @@ export class MailService {
         },
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error('Error sending OTP code to email', error);
     }
   }
 
@@ -73,7 +73,7 @@ export class MailService {
         },
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error('Error sending member status update email', error);
     }
   }
 
@@ -97,28 +97,9 @@ export class MailService {
         },
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error('Error sending verification link email', error);
     }
   }
 
-  async sendNotificationEmail(params: {
-  to: string;
-  subject: string;
-  template?: string;
-  context?: Record<string, any>;
-}) {
-  try {
-    const from = `${process.env.APP_NAME} <${appConfig().mail.from}>`;
 
-    await this.notificationQueue.add('sendNotificationEmail', {
-      to: params.to,
-      from,
-      subject: params.subject,
-      template: params.template ?? 'notification-generic',
-      context: params.context ?? {},
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
 }

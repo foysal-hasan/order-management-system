@@ -8,7 +8,8 @@ import { AuthController } from './auth.controller';
 import appConfig from '../../config/app.config';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { MailModule } from '../../mail/mail.module';
-import { GoogleStrategy } from './strategies/google.strategy';
+import { DateHelper } from 'src/common/helper/date.helper';
+
 
 @Module({
   imports: [
@@ -19,15 +20,15 @@ import { GoogleStrategy } from './strategies/google.strategy';
     // }),
     JwtModule.registerAsync({
       useFactory: async () => ({
-        secret: appConfig().jwt.secret,
-        signOptions: { expiresIn: appConfig().jwt.expiry },
+        secret: appConfig().jwt.access_token_secret,
+        signOptions: { expiresIn: DateHelper.generateFutureDate(appConfig().jwt.access_token_expiry).unixSeconds },
       }),
     }),
     PrismaModule,
     MailModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, ],
   exports: [AuthService],
 })
 export class AuthModule {}

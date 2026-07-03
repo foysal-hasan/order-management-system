@@ -7,6 +7,11 @@
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+generator client_js {
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -29,6 +34,7 @@ model User {
   created_At DateTime @default(now())
   updated_At DateTime @updatedAt
 
+  avatar   String?
   email    String   @unique
   name     String
   type     UserType @default(CUSTOMER)
@@ -55,4 +61,35 @@ model UserSession {
   expires_at  DateTime @db.Timestamptz
 
   @@map("user_sessions")
+}
+
+
+
+model ProductCategory {
+  id          String    @id @default(cuid())
+  created_at  DateTime  @default(now()) @db.Timestamptz
+  updated_at  DateTime  @updatedAt @db.Timestamptz
+
+  name        String    @unique
+  description String?
+
+  products    Product[]
+
+  @@map("product_categories")
+}
+
+model Product {
+  id             String    @id @default(cuid())
+  created_at     DateTime  @default(now()) @db.Timestamptz
+  updated_at     DateTime  @updatedAt @db.Timestamptz
+
+  name           String
+  image          String
+  price          Decimal   @db.Decimal(10, 2)
+  stock_quantity Int
+
+  category_id    String
+  category       ProductCategory @relation(fields: [category_id], references: [id], onDelete: Restrict)
+
+  @@map("products")
 }

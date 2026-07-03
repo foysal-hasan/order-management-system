@@ -1,25 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
-export class VerifyEmailDto {
+export class VerifyForgotPasswordOtpDto {
+  @IsNotEmpty()
+  @IsEmail()
   @ApiProperty({
     description: 'User email address',
-    example: 'john.doe@example.com',
-    format: 'email',
+    example: 'user@example.com',
   })
-  @IsNotEmpty()
   @Transform(({ value }) => value?.toLowerCase().trim())
-  @IsEmail()
   email: string;
 
-
+  @IsNotEmpty()
+  @IsString()
   @ApiProperty({
-    description: 'Verification token sent to the user email',
+    description: '6 digit OTP sent to email',
     example: '123456',
   })
-  @IsNotEmpty()
   @Transform(({ value }) => value?.trim())
-  @IsString()
-  token: string;
+  otp: string;
 }

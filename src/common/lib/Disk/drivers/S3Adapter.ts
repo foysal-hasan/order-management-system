@@ -1,62 +1,59 @@
-import * as AWS from 'aws-sdk';
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+  DeleteObjectCommand,
+  HeadObjectCommand,
+} from '@aws-sdk/client-s3';
+
+
 import { IStorage } from './iStorage';
 import { DiskOption } from '../Option';
+import { Readable } from 'stream';
 
-/**
- * S3Adapter for s3 bucket storage
- */
 export class S3Adapter implements IStorage {
   private _config: DiskOption;
-  private s3: AWS.S3;
+  private s3: S3Client;
 
   constructor(config: DiskOption) {
     this._config = config;
-    const awsConfig: AWS.S3.ClientConfiguration = {
-      endpoint: this._config.connection.awsEndpoint,
+
+    this.s3 = new S3Client({
       region: this._config.connection.awsDefaultRegion,
+      endpoint: this._config.connection.awsEndpoint || undefined,
       credentials: {
-        accessKeyId: this._config.connection.awsAccessKeyId!,
-        secretAccessKey: this._config.connection.awsSecretAccessKey!,
+        accessKeyId: this._config.connection.awsAccessKeyId,
+        secretAccessKey: this._config.connection.awsSecretAccessKey,
       },
-    };
-    if (this._config.connection.minio) {
-      // s3ForcePathStyle: true, // Required for MinIO
-      awsConfig['s3ForcePathStyle'] = true;
-    }
-    this.s3 = new AWS.S3({
-      ...awsConfig,
+      forcePathStyle: this._config.connection.minio ?? false, // Required for MinIO
     });
   }
 
   /**
-   * returns object url
-   *
-   * https://[bucketname].s3.[region].amazonaws.com/[object]
-   * and for minio
-   * http://[endpoint]/[bucketname]/[object]
-   * @param key
-   * @returns
+   * Generate file URL
    */
-
   url(key: string): string {
     if (this._config.connection.minio) {
       return `${this._config.connection.awsEndpoint}/${this._config.connection.awsBucket}/${key}`;
     }
+
     return `https://${this._config.connection.awsBucket}.s3.${this._config.connection.awsDefaultRegion}.amazonaws.com/${key}`;
   }
 
   /**
-   * check if file exists
-   * @param key
-   * @returns
+   * Check if object exists
    */
   async isExists(key: string): Promise<boolean> {
     try {
-      const params:AWS.S3.HeadObjectRequest  = { Bucket: this._config.connection.awsBucket!, Key: key };
-      await this.s3.headObject(params).promise();
+      await this.s3.send(
+        new HeadObjectCommand({
+          Bucket: this._config.connection.awsBucket,
+          Key: key,
+        }),
+      );
       return true;
-    } catch (error) {
-      if ((error as AWS.AWSError).code === 'NotFound') {
+    } catch (error: any) {
+      if (error.name === 'NotFound') {
         return false;
       }
       throw error;
@@ -64,55 +61,67 @@ export class S3Adapter implements IStorage {
   }
 
   /**
-   * get data
-   * @param key
+   * Get file stream
    */
-  async get(key: string) {
+  async get(key: string): Promise<Readable> {
     try {
-      const params: AWS.S3.HeadObjectRequest = { Bucket: this._config.connection.awsBucket!, Key: key };
-      const data = this.s3.getObject(params).createReadStream();
-      return data;
+      const response = await this.s3.send(
+        new GetObjectCommand({
+          Bucket: this._config.connection.awsBucket,
+          Key: key,
+        }),
+      );
+
+      return response.Body as Readable;
     } catch (error) {
       throw new Error(`Failed to get object ${key}: ${error}`);
     }
   }
 
   /**
-   * put data
-   * @param key
-   * @param value
+   * Upload file
    */
   async put(
     key: string,
     value: Buffer | Uint8Array | string,
-  ): Promise<AWS.S3.ManagedUpload.SendData> {
+    contentType?: string,
+    isPublic: boolean = true, 
+  ): Promise<string> {
     try {
-      const params: AWS.S3.PutObjectRequest = {
-        Bucket: this._config.connection.awsBucket!,
-        Key: key,
-        Body: value,
-      };
-      const upload = await this.s3.upload(params).promise();
-      return upload;
+      await this.s3.send(
+        new PutObjectCommand({
+          Bucket: this._config.connection.awsBucket,
+          Key: key,
+          Body: value,
+          ContentType: contentType,
+          // ACL: isPublic ? 'public-read' : undefined,
+        }),
+      );
+
+      return this.url(key);
     } catch (error) {
       throw error;
     }
   }
 
   /**
-   * delete data
-   * @param key
+   * Delete object
    */
   async delete(key: string): Promise<boolean> {
     try {
-      const params: AWS.S3.DeleteObjectRequest = { Bucket: this._config.connection.awsBucket!, Key: key };
-      await this.s3.deleteObject(params).promise();
+      await this.s3.send(
+        new DeleteObjectCommand({
+          Bucket: this._config.connection.awsBucket,
+          Key: key,
+        }),
+      );
       return true;
-    } catch (error) {
-      if ((error as AWS.AWSError).code === 'NotFound') {
+    } catch (error: any) {
+      if (error.name === 'NotFound') {
         return false;
       }
       throw error;
     }
   }
 }
+
