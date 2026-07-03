@@ -87,9 +87,9 @@ import { PrismaClientKnownRequestError } from 'src/generated/prisma/internal/pri
     private getHttpStatus(errorCode: string): number {
       switch (errorCode) {
         case 'P2002': // Unique constraint violation
-          return 400; // Bad Request
+          return 409; // Conflict
         case 'P2003': // Foreign key constraint violation
-          return 400; // Bad Request
+          return 409; // Conflict
         case 'P2025': // Record not found
           return 404; // Not Found
         case 'P2016': // Invalid field error

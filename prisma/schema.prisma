@@ -84,6 +84,7 @@ model Product {
   updated_at     DateTime  @updatedAt @db.Timestamptz
 
   name           String
+  slug           String   @unique
   image          String
   price          Decimal   @db.Decimal(10, 2)
   stock_quantity Int
