@@ -92,9 +92,10 @@ export default () => ({
     rootUrl: './public/storage',
     rootUrlPublic: '/public/storage',
     // storage directory
-    destination: '/destination',
-    store: '/store',
-    avatar: '/avatar',
+    destination: '/destination/',
+    store: '/store/',
+    avatar: '/avatar/',
+    product: '/product/',
    
 
    

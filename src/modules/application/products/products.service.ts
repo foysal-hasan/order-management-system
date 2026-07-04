@@ -5,7 +5,7 @@ import { Prisma } from 'src/generated/prisma/client';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
 
   async findAll(query: QueryProductDto) {
@@ -24,7 +24,7 @@ export class ProductsService {
       };
     }
 
-    const [data, total] = await this.prisma.$transaction([
+    const [items, total] = await Promise.all([
       this.prisma.product.findMany({
         where: whereClause,
         skip,
@@ -36,12 +36,13 @@ export class ProductsService {
     ]);
 
     return {
-      items: data,
-      meta: { 
-        total, 
-        page, 
-        limit, 
-        totalPages: Math.ceil(total / limit) },
+      items,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      },
     };
   }
 

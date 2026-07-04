@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsString, IsNumber, IsUrl, Min } from 'class-validator';
 
 export class CreateProductDto {
@@ -7,17 +8,24 @@ export class CreateProductDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ example: 'https://example.com/keyboard.jpg', description: 'Product image URL' })
-  @IsUrl()
-  @IsNotEmpty()
-  image: string;
+  @ApiPropertyOptional({
+    description: 'Image file for the product',
+    type: 'string',
+    format: 'binary',
+    required: true,
+  })
+  image_file: File;
+
+  image?: string;
 
   @ApiProperty({ example: 89.99, description: 'Product retail price' })
+  @Transform(({ value }) => parseFloat(value))
   @IsNumber()
   @Min(0)
   price: number;
 
   @ApiProperty({ example: 50, description: 'Stock availability count' })
+  @Transform(({ value }) => parseInt(value, 10))
   @IsNumber()
   @Min(0)
   stock_quantity: number;

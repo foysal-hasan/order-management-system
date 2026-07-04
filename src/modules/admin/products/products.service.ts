@@ -10,7 +10,7 @@ import { Prisma } from 'src/generated/prisma/client';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   private async generateUniqueSlug(name: string): Promise<string> {
     const baseSlug = SlugHelper.slugify(name);
@@ -71,7 +71,7 @@ export class ProductsService {
       };
     }
 
-    const [data, total] = await this.prisma.$transaction([
+    const [items, total] = await Promise.all([
       this.prisma.product.findMany({
         where: whereClause,
         skip,
@@ -83,12 +83,13 @@ export class ProductsService {
     ]);
 
     return {
-      data,
-      meta: { 
-        total, 
-        page, 
-        limit, 
-        totalPages: Math.ceil(total / limit) },
+      items,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      },
     };
   }
 
@@ -124,7 +125,7 @@ export class ProductsService {
       categoryId = category.id;
     }
 
-    return this.prisma.product.update({
+    const updatedProduct = await this.prisma.product.update({
       where: { slug },
       data: {
         name: updateProductDto.name,
@@ -136,9 +137,14 @@ export class ProductsService {
       },
       include: { category: true },
     });
+
+    return {
+      updatedProduct,
+      oldImagePath: updateProductDto.image && updateProductDto.image !== product.image ? product.image : null,
+    }
   }
 
-  async remove(slug: string) {
+  remove(slug: string) {
     return this.prisma.product.delete({
       where: { slug },
     });
