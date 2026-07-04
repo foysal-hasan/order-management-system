@@ -6,12 +6,16 @@ import { ProductsService } from './products.service';
 import { QueryProductDto } from './dto/query-product.dto';
 import { TransformResponseInterceptor } from 'src/common/interceptors/response.interceptor';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guard/role/roles.guard';
+import { Roles } from 'src/common/guard/role/roles.decorator';
+import { UserType } from 'src/generated/prisma/enums';
 
 @ApiTags('Admin / Products')
 @ApiBearerAuth()
 @Controller('admin/products')
 @UseInterceptors(TransformResponseInterceptor)
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserType.ADMIN)
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 

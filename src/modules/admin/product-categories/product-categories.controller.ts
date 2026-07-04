@@ -6,13 +6,17 @@ import { ProductCategoryQueryDto } from './dto/query-product-category.dto';
 import { UpdateProductCategoryDto } from './dto/update-product-category.dto';
 import { TransformResponseInterceptor } from 'src/common/interceptors/response.interceptor';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/common/guard/role/roles.guard';
+import { Roles } from 'src/common/guard/role/roles.decorator';
+import { UserType } from 'src/generated/prisma/enums';
 
 
 @ApiTags('Admin / Product Categories')
 @ApiBearerAuth()
 @Controller('admin/product-categories')
 @UseInterceptors(TransformResponseInterceptor)
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserType.ADMIN)
 export class ProductCategoriesController {
   constructor(private readonly adminService: ProductCategoriesService) {}
 

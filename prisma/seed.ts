@@ -66,6 +66,7 @@ async function seedUsers() {
                 password: userData.password,
                 name: userData.name,
                 type: userData.type,
+                email_verified_at: new Date(),
             },
         });
     }
