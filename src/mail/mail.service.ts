@@ -40,18 +40,17 @@ export class MailService {
 
       this.logger.debug(`Adding job to queue for sending OTP code: ${otp} to email: ${email}`);
       
-      // TODO: uncomment this add queue
       // add to queue
-      // await this.queue.add('sendOtpCodeToEmail', {
-      //   to: email,
-      //   from: from,
-      //   subject: subject,
-      //   template: 'email-verification',
-      //   context: {
-      //     name: name,
-      //     otp: otp,
-      //   },
-      // });
+      await this.queue.add('sendOtpCodeToEmail', {
+        to: email,
+        from: from,
+        subject: subject,
+        template: 'email-verification',
+        context: {
+          name: name,
+          otp: otp,
+        },
+      });
     } catch (error) {
       this.logger.error('Error sending OTP code to email', error);
     }
