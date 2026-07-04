@@ -9,7 +9,7 @@ import { SlugHelper } from 'src/common/helper/slug.helper';
 import { QueryProductDto } from './dto/query-product.dto';
 
 @Injectable()
-export class ProductService {
+export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   private async generateUniqueSlug(name: string): Promise<string> {
