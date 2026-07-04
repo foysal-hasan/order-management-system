@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1078.0",
+    "@google-cloud/storage": "^7.21.0",
     "@nestjs-modules/ioredis": "^2.2.1",
     "@nestjs-modules/mailer": "^2.3.7",
     "@nestjs/bullmq": "^11.0.4",

@@ -2,11 +2,11 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
-import { Prisma } from '@prisma/client';
 import { randomBytes } from 'crypto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SlugHelper } from 'src/common/helper/slug.helper';
 import { QueryProductDto } from './dto/query-product.dto';
+import { Prisma } from 'src/generated/prisma/client';
 
 @Injectable()
 export class ProductsService {
