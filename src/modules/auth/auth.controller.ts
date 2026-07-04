@@ -54,7 +54,7 @@ import { ResendVerificationEmailDto } from './dto/resend-verification-email.dto'
 
 
 
-@ApiTags('auth')
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService, private jwtService: JwtService) { }
