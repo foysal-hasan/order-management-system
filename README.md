@@ -1,58 +1,258 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Order Management System (NestJS + Prisma)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project is a backend API for an order management system, built with NestJS, Prisma, and PostgreSQL.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This guide is written for beginners so you can install, run, migrate, seed, and test the project from scratch.
 
-## Description
+## Tech Stack
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- Node.js + Yarn
+- NestJS
+- Prisma ORM
+- PostgreSQL
 
-## Project setup
+## Prerequisites
+
+Make sure these are installed first:
+
+- Node.js 20+ (recommended)
+- Yarn 1.x
+- PostgreSQL (local or remote)
+
+## 1) Install Dependencies
 
 ```bash
-$ yarn install
+yarn install
 ```
 
-## Compile and run the project
+## 2) Environment Setup
+
+Copy the example environment file:
 
 ```bash
-# development
-$ yarn run start
-
-# watch mode
-$ yarn run start:dev
-
-# production mode
-$ yarn run start:prod
+cp .env.example .env
 ```
 
-## Order ID Generation Algorithm Logic
+If you are on Windows PowerShell:
 
-The system utilizes a compound multi-segment structure to generate highly legible, zero-collision tracking references:
+```powershell
+Copy-Item .env.example .env
+```
 
-Format: [CAT]-[PROD]-[YYMMDD]-[RANDOM_HEX]
-Example: ELE-MECH-260704-4B9F
+Update all environment variables in `.env`.
 
-### Guarantees of Uniqueness:
-1. **Time Domain Isolation**: The timestamp segment (`YYMMDD`) keeps lookup scope segmented by individual days.
-2. **Contextual Variety**: Utilizing abbreviated category names and item names limits systemic string duplication across unrelated target transactions.
-3. **Entropy Space**: The inclusion of a 4-character cryptographic hexadecimal string adds 65,536 unique random combinations *per product, per category, per day*.
-4. **Collision Loop Checks**: Before finishing execution, the service method performs an internal look-up check. If a collision is found, the system invalidates it, generates a fresh random seed suffix, and proceeds smoothly without error.
+Recommended starter values for local development:
+
+```env
+APP_NAME=Order Management System
+APP_KEY=replace-with-random-key
+PORT=4000
+APP_URL=http://localhost:4000
+NODE_ENV=development
+CLIENT_APP_URL=http://localhost:3001
+
+FILESYSTEM_DRIVER=local
+CROSS_ORIGINS=http://localhost:3000,http://localhost:3001
+
+JWT_ACCESS_TOKEN_SECRET=replace-with-access-secret
+JWT_REFRESH_TOKEN_SECRET=replace-with-refresh-secret
+JWT_ACCESS_TOKEN_EXPIRY=1h
+JWT_REFRESH_TOKEN_EXPIRY=7d
+
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/order_management_system?schema=public
+
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+REDIS_PASSWORD=
+
+MAIL_HOST=smtp.gmail.com
+MAIL_USERNAME=
+MAIL_PASSWORD=
+MAIL_FROM_ADDRESS=
+MAIL_FROM_NAME=
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=
+AWS_BUCKET=
+AWS_URL=
+AWS_ENDPOINT=
+
+SYSTEM_EMAIL=admin@email.com
+SYSTEM_PASSWORD=Admin@123!
+```
+
+Environment variable checklist (from `.env.example`):
+
+- `APP_NAME`
+- `APP_KEY`
+- `PORT`
+- `APP_URL`
+- `NODE_ENV`
+- `CLIENT_APP_URL`
+- `FILESYSTEM_DRIVER`
+- `CROSS_ORIGINS`
+- `JWT_ACCESS_TOKEN_SECRET`
+- `JWT_REFRESH_TOKEN_SECRET`
+- `JWT_ACCESS_TOKEN_EXPIRY`
+- `JWT_REFRESH_TOKEN_EXPIRY`
+- `DATABASE_URL`
+- `REDIS_HOST`
+- `REDIS_PORT`
+- `REDIS_PASSWORD`
+- `MAIL_HOST`
+- `MAIL_USERNAME`
+- `MAIL_PASSWORD`
+- `MAIL_FROM_ADDRESS`
+- `MAIL_FROM_NAME`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_DEFAULT_REGION`
+- `AWS_BUCKET`
+- `AWS_URL`
+- `AWS_ENDPOINT`
+- `SYSTEM_EMAIL`
+- `SYSTEM_PASSWORD`
+
+## 3) Prisma Generate
+
+Generate Prisma client after pulling new changes or after editing schema:
+
+```bash
+yarn prisma generate
+```
+
+## 4) Prisma Migrate
+
+Apply migrations to your database:
+
+```bash
+yarn prisma migrate dev
+```
+
+If your database is out of sync during local development, you can reset and re-apply everything:
+
+```bash
+yarn prisma migrate reset
+```
+
+## 5) Seed Database
+
+Run seed data using the project command:
+
+```bash
+yarn db:seed
+```
+
+This command runs `prisma db seed`, which is configured to execute `prisma/seed.ts`.
+
+Current seed users (exact list from `prisma/seed.ts`):
+
+- User 1 (ADMIN)
+   - Name: `admin user`
+   - Email: from `SYSTEM_EMAIL` (fallback: `admin@email.com`)
+   - Password: from `SYSTEM_PASSWORD` (fallback: `Admin@123!`)
+- User 2 (CUSTOMER)
+   - Name: `customer 001`
+   - Email: `c1@email.com`
+   - Password: `12345678`
+- User 3 (CUSTOMER)
+   - Name: `customer 002`
+   - Email: `c2@email.com`
+   - Password: `12345678`
+
+## 6) Run Project
+
+Development (watch):
+
+```bash
+yarn start:dev
+```
+
+Development with SWC (faster compile/watch):
+
+```bash
+yarn start:dev-swc
+```
+
+Production:
+
+```bash
+yarn build
+yarn start:prod
+```
+
+## URL and Docs URL
+
+By default, if `PORT=4000`:
+
+- App URL: `http://localhost:4000`
+- Health Check: `http://localhost:4000/health`
+- API Base Prefix: `http://localhost:4000/api`
+- Swagger Docs: `http://localhost:4000/api/docs`
+
+If you change `PORT` in `.env`, update the URL accordingly.
+
+## How To Start Testing Quickly
+
+If you are new to the project, use this order:
+
+1. Install dependencies
+2. Configure `.env`
+3. Run Prisma generate
+4. Run Prisma migrate
+5. Run seed with `yarn db:seed`
+6. Start app in dev mode
+7. Open Swagger docs and test endpoints
+
+## Note About Test Seed
+
+At the moment, this repository has one main seed file: `prisma/seed.ts`.
+
+There is no separate dedicated test seed file yet (for example `seed.test.ts`).
+
+So for local testing and manual API testing, start from the existing seed command:
+
+```bash
+yarn db:seed
+```
+
+If you need a separate test-only dataset later, you can add a second seed flow for your test environment.
+
+## Useful Commands
+
+```bash
+# Install
+yarn install
+
+# Prisma
+yarn prisma generate
+yarn prisma migrate dev
+yarn db:seed
+
+# Run
+yarn start:dev
+yarn start:dev-swc
+yarn build
+yarn start:prod
+
+# Tests
+yarn test
+yarn test:e2e
+```
+
+## Common Issues
+
+1. Prisma cannot connect to DB
+   - Check `DATABASE_URL` and make sure PostgreSQL is running.
+
+2. Prisma client out of date
+   - Run `yarn prisma generate` again.
+
+3. Tables not found
+   - Run `yarn prisma migrate dev` and then `yarn db:seed`.
+
+## Project Docs
+
+- NestJS docs: https://docs.nestjs.com
+- Prisma docs: https://www.prisma.io/docs
