@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsInt, Min, IsEnum, IsString, IsDateString } from 'class-validator';
+import { IsOptional, IsInt, Min, IsEnum, IsString, IsDateString, IsIn } from 'class-validator';
 import { Type } from 'class-transformer';
 import { OrderStatus, PaymentMethod } from 'src/generated/prisma/enums';
 
@@ -44,10 +44,13 @@ export class QueryOrderDto {
     end_date?: string;
 
     @ApiPropertyOptional({
-        example: 'createdAt_desc',
-        description: 'Format: field_asc or field_desc (e.g., createdAt_asc, totalPrice_desc). Valid fields: createdAt, totalPrice'
+        example: 'created_at__desc',
+        default: 'created_at__desc',
+        enum: ['created_at__desc', 'created_at__asc', 'total_price__desc', 'total_price__asc'],
+        description: 'Sort criteria in the format: field__direction'
     })
     @IsOptional()
     @IsString()
-    sort?: string = 'createdAt_desc';
+    @IsIn(['created_at__desc', 'created_at__asc', 'total_price__desc', 'total_price__asc'])
+    sort?: string = 'created_at__desc';
 }

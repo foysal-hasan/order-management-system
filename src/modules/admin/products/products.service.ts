@@ -31,6 +31,19 @@ export class ProductsService {
     return uniqueSlug;
   }
 
+    private parseSortParam(sortString: string): Prisma.ProductOrderByWithRelationInput {
+    if (!sortString) return { created_at: 'desc' };
+
+    // Split safely by the double underscore
+    const [field, direction] = sortString.split('__');
+
+    // Explicitly enforce Prisma's strict SortOrder type
+    const sortOrder: Prisma.SortOrder = direction === 'asc' ? 'asc' : 'desc';
+
+    // Return the dynamic object cleanly
+    return { [field]: sortOrder };
+  }
+
   async create(createProductDto: CreateProductDto) {
     const slug = await this.generateUniqueSlug(createProductDto.name);
 
@@ -77,7 +90,7 @@ export class ProductsService {
         skip,
         take: limit,
         include: { category: true },
-        orderBy: { created_at: 'desc' },
+        orderBy: this.parseSortParam(query.sort)
       }),
       this.prisma.product.count({ where: whereClause }),
     ]);

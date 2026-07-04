@@ -29,19 +29,17 @@ export class OrdersService {
     return orderId;
   }
 
-
   private parseSortParam(sortString: string): Prisma.OrderOrderByWithRelationInput {
     if (!sortString) return { created_at: 'desc' };
 
-    const [field, direction] = sortString.split('_');
+    // Split safely by the double underscore double delimiter
+    const [field, direction] = sortString.split('__');
 
-    // Enforce Prisma's expected SortOrder type ('asc' or 'desc')
+    // Cast directly to Prisma's strict SortOrder type
     const sortOrder: Prisma.SortOrder = direction === 'asc' ? 'asc' : 'desc';
 
-    // Map the DTO field names to your database snake_case columns
-    const actualField = field === 'createdAt' ? 'created_at' : field === 'totalPrice' ? 'total_price' : field;
-
-    return { [actualField]: sortOrder };
+    // Dynamic configuration object injection
+    return { [field]: sortOrder };
   }
 
   async create(createOrderDto: CreateOrderDto) {
