@@ -193,6 +193,42 @@ By default, if `PORT=4000`:
 
 If you change `PORT` in `.env`, update the URL accordingly.
 
+## Order ID Generation Algorithm (Explanation)
+
+Order IDs are generated inside the application order service and follow this format:
+
+```text
+[CAT]-[PROD]-[YYMMDD]-[RANDOM_HEX]
+```
+
+Example:
+
+```text
+ELE-MEC-260704-4B9F
+```
+
+How each part is created:
+
+- `CAT`: first 3 characters of the first product's category name, uppercased.
+   - If category name has fewer than 3 characters, it is padded with `X`.
+- `PROD`: first 3 characters of the first product name, uppercased.
+   - If product name has fewer than 3 characters, it is padded with `X`.
+- `YYMMDD`: current date at generation time.
+- `RANDOM_HEX`: 4-character uppercase hex from cryptographic random bytes.
+
+Uniqueness strategy:
+
+- The system checks whether generated `order_id` already exists in the database.
+- If it exists, it generates a new random hex and retries in a loop.
+- It only returns when a unique `order_id` is found.
+
+Why this is reliable:
+
+- Date segmentation reduces same-key pressure by day.
+- Prefixes improve readability for support and ops teams.
+- Random hex adds 65,536 combinations per date and prefix pair.
+- DB existence check prevents collisions from being saved.
+
 ## How To Start Testing Quickly
 
 If you are new to the project, use this order:
